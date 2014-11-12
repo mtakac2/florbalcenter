@@ -2,6 +2,19 @@
 * This is a manifest file that includes stylesheets for spree_frontend
 * Spree_bootstrap_frontend overrides all spree’s default css and resets here in favour of bootstrap
 *= require spree/frontend/bootstrap_frontend
+*= require font-awesome
+*= require tshop_template/animate.min
+*= require tshop_template/alpha
+*= require tshop_template/jquery.minimalect
+*= require tshop_template/smoothproducts
+*= require tshop_template/gray-look
+*= require tshop_template/skin-9
+*= require tshop_template/style
 *= require_self
 *= require_tree .
 */
+
+div.product div.image img {
+	width: 180px;
+	height: 240px;
+}

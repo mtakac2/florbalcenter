@@ -1,0 +1,77 @@
+<%
+  paginated_products = @searcher.retrieve_products if params.key?(:keywords)
+  paginated_products ||= products
+%>
+
+<% content_for :head do %>
+  <% if paginated_products.respond_to?(:num_pages) %>
+    <%= rel_next_prev_link_tags paginated_products %>
+  <% end %>
+<% end %>
+
+<div data-hook="products_search_results_heading">
+  <% if products.empty? %>
+    <div data-hook="products_search_results_heading_no_results_found">
+      <%= Spree.t(:no_products_found) %>
+    </div>
+  <% elsif params.key?(:keywords) %>
+    <div data-hook="products_search_results_heading_results_found">
+      <h6 class="search-results-title"><%= Spree.t(:search_results, :keywords => h(params[:keywords])) %></h6>
+    </div>
+  <% end %>
+</div>
+
+<% if products.any? %>
+<div class="morePost row featuredPostContainer style2" >
+  <div class="col-lg-12">
+    <h3 class="boxes-title-1"><span>FEATURES PRODUCT</span></h3>
+  </div>
+
+  <ul id="products" class="inline product-listing container" data-hook>
+    <div class="row xsResponse">
+      <% products.each do |product| %>
+        <% url = product_path(product, :taxon_id => @taxon.try(:id)) %>
+        <div class="item col-lg-3 col-md-3 col-sm-4 col-xs-6">
+          <div id="product_<%= product.id %>" class="product" data-hook="products_list_item" itemscope itemtype="http://schema.org/Product">
+            <% cache(@taxon.present? ? [I18n.locale, current_currency, @taxon, product] : [I18n.locale, current_currency, product]) do %>
+              <a class="add-fav tooltipHere" data-toggle="tooltip" data-original-title="Add to Wishlist"  data-placement="left">
+                <i class="glyphicon glyphicon-heart"></i>
+              </a>
+              <div class="image">
+                <div class="quickview">
+                  <a title="Quick View" class="btn btn-xs  btn-quickview" data-target="#product-details-modal" data-toggle="modal"> Quick View </a>
+                </div>
+                <a href="product-details.html">
+                  <%= link_to small_image(product, :itemprop => "image", class: 'img-responsive', width: 180, height: 240), url, :itemprop => 'url' %>
+                </a>
+                <div class="promotion"> <span class="new-product"> NEW</span> <span class="discount">15% OFF</span> </div>
+              </div>
+              <div class="description">
+                <h4>
+                  <%= link_to truncate(product.name, :length => 50), url, :class => 'info', :itemprop => "name", :title => product.name %>
+                </h4>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. </p>
+                <span class="size">XL / XXL / S </span>
+              </div>
+              <div class="price">
+                <span itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                  <span class="price selling lead" itemprop="price"><%= display_price(product) %></span>
+                </span>
+              </div>
+              <div class="action-control"> <a class="btn btn-primary"> <span class="add2cart"><i class="glyphicon glyphicon-shopping-cart"> </i> Add to cart </span> </a> </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </ul>
+</div>
+<% end %>
+
+<% if paginated_products.respond_to?(:num_pages) %>
+  <div class="row">
+    <div class="load-more-block text-center">
+      <%= paginate paginated_products %>
+    </div>
+  </div>
+<% end %>
